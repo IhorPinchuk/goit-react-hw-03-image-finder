@@ -1,0 +1,9 @@
+.error_image {
+  display: block;
+  margin: 0 auto;
+}
+
+.error_message {
+  text-align: center;
+  font-size: 30px;
+}
