@@ -1,15 +1,16 @@
-import  ImgSpinner from './loader.jpg';
+import loading from './loader.png';
+import css from './Loader.module.css';
 
 export default function Loader() {
-    return (
-        <div role='alert'>
-            <img
-        // className={css.error_image}
-        src={ImgSpinner}
+  return (
+    <div className={css.loader_wrapper} role="alert">
+      <img
+        className={css.loader_image}
+        src={loading}
         width={300}
         alt="loading"
       />
-            <p>Loading...</p>
-        </div>
-    )
+      <p className={css.loader_text}>Loading...</p>
+    </div>
+  );
 }
