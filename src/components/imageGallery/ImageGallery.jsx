@@ -50,7 +50,6 @@ export default class ImageGallery extends Component {
   }
 
   handleClickLoadMore = () => {
-    
     fetch(
       `https://pixabay.com/api/?q=${this.props.imageName}&page=${this.state.page}&key=34901760-7d58d5b4fa3fae593317e5336&image_type=photo&orientation=horizontal&per_page=12`
     )
@@ -94,7 +93,7 @@ export default class ImageGallery extends Component {
   render() {
     const { error, images, status, showModal } = this.state;
 
-       if (status === 'pending') {
+    if (status === 'pending') {
       return <Loader />;
     }
 
@@ -119,14 +118,10 @@ export default class ImageGallery extends Component {
           </ul>
           <Button onClick={this.handleClickLoadMore} />
 
-                    {showModal && (
-            <Modal
-                                onClose={this.handleCloseModal}>
-                                    <img
-                                        src={this.state.modalImgUrl}
-                                        alt={this.state.modalAlt}
-                                    />
-                            </Modal>
+          {showModal && (
+            <Modal onClose={this.handleCloseModal}>
+              <img src={this.state.modalImgUrl} alt={this.state.modalAlt} />
+            </Modal>
           )}
         </>
       );

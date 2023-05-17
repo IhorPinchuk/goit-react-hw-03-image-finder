@@ -1,3 +1,4 @@
+import propTypes from 'prop-types';
 import errorImage from './oops.jpg';
 import css from './ErrorGaleryImages.module.css';
 
@@ -14,3 +15,7 @@ export default function ErrorGaleryImages({ message }) {
     </div>
   );
 }
+
+ErrorGaleryImages.propTypes = {
+  message: propTypes.string.isRequired,
+};
