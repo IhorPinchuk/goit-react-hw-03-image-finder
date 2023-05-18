@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import { toast } from 'react-toastify';
 import ImageGalleryItem from 'components/imageGalleryItem/ImageGalleryItem';
 import { fetchImages } from '../../services/images-api';
 import css from './ImageGallery.module.css';
@@ -99,12 +98,8 @@ export default class ImageGallery extends Component {
                 />
               ))}
           </ul>
-          {this.state.images.length < this.state.totalHits ? (
+          {this.state.images.length < this.state.totalHits && (
             <Button onClick={this.handleClickLoadMore} />
-          ) : (
-            toast.info(
-              `We're sorry, but you've reached the end of search results.`
-            )
           )}
 
           {showModal && (
