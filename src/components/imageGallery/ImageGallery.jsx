@@ -1,5 +1,7 @@
 import { Component } from 'react';
+import { toast } from 'react-toastify';
 import ImageGalleryItem from 'components/imageGalleryItem/ImageGalleryItem';
+import { fetchImages } from '../../services/images-api';
 import css from './ImageGallery.module.css';
 import ErrorGaleryImages from 'components/errorGaleryImages/ErrorGaleryImages';
 import Loader from 'components/loader/Loader';
@@ -9,6 +11,7 @@ import Modal from 'components/modal/Modal';
 export default class ImageGallery extends Component {
   state = {
     images: [],
+    totalHits: null,
     error: null,
     status: 'idle',
     page: 1,
@@ -17,57 +20,37 @@ export default class ImageGallery extends Component {
     modalAlt: '',
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const prevName = prevProps.imageName;
     const nextName = this.props.imageName;
-    const API_KEY = '34901760-7d58d5b4fa3fae593317e5336';
-    const BASE_URL = 'https://pixabay.com/api/';
 
     if (prevName !== nextName) {
-      this.setState({ status: 'pending' });
+      this.setState({ page: 1, status: 'pending' });
 
-      fetch(
-        `${BASE_URL}?q=${nextName}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          }
-
-          return Promise.reject(
-            new Error(`No picture or photo with title ${nextName}`)
-          );
-        })
+      await fetchImages(nextName, 1)
         .then(images =>
           this.setState({
             images: images.hits,
-            page: prevState.page + 1,
             status: 'resolved',
+            totalHits: images.totalHits,
           })
         )
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
   }
 
-  handleClickLoadMore = () => {
-    fetch(
-      `https://pixabay.com/api/?q=${this.props.imageName}&page=${this.state.page}&key=34901760-7d58d5b4fa3fae593317e5336&image_type=photo&orientation=horizontal&per_page=12`
-    )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
+  handleClickLoadMore = async () => {
+    this.setState(prevState => {
+      return { page: prevState.page + 1 };
+    });
 
-        return Promise.reject(
-          new Error(`No picture or photo with title ${this.props.imageName}`)
-        );
-      })
+    const nextName = this.props.imageName;
+    const page = this.state.page + 1;
+    await fetchImages(nextName, page)
       .then(images =>
         this.setState(prevState => {
           return {
             images: [...prevState.images, ...images.hits],
-            page: prevState.page + 1,
-            status: 'resolved',
           };
         })
       )
@@ -116,7 +99,13 @@ export default class ImageGallery extends Component {
                 />
               ))}
           </ul>
-          <Button onClick={this.handleClickLoadMore} />
+          {this.state.images.length < this.state.totalHits ? (
+            <Button onClick={this.handleClickLoadMore} />
+          ) : (
+            toast.info(
+              `We're sorry, but you've reached the end of search results.`
+            )
+          )}
 
           {showModal && (
             <Modal onClose={this.handleCloseModal}>
